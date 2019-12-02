@@ -1,8 +1,10 @@
-<br/>
-<p align="center"><strong>Previous:</strong><br/><a href="./installing-slate.md">Installing Slate</a></p>
-<br/>
-
 # Adding Event Handlers
+
+**Previous:**  
+[Installing Slate](installing-slate.md)   
+
+
+## Adding Event Handlers
 
 Okay, so you've got Slate installed and rendered on the page, and when you type in it, you can see the changes reflected. But you want to do more than just type a plaintext string.
 
@@ -12,7 +14,7 @@ Let's use the `onKeyDown` handler to change the editor's content when we press a
 
 Here's our app from earlier:
 
-```js
+```javascript
 class App extends React.Component {
   state = {
     value: initialValue,
@@ -30,7 +32,7 @@ class App extends React.Component {
 
 Now we add an `onKeyDown` handler:
 
-```js
+```javascript
 class App extends React.Component {
   state = {
     value: initialValue,
@@ -64,7 +66,7 @@ Now we want to make it actually change the content. For the purposes of our exam
 
 Our `onKeyDown` handler might look like this:
 
-```js
+```javascript
 class App extends React.Component {
   state = {
     value: initialValue,
@@ -101,6 +103,7 @@ With that added, try typing `&`, and you should see it suddenly become `and` ins
 
 This offers a sense of what can be done with Slate's event handlers. Each one will be called with the `event` object, and the `editor` that lets you perform commands. Simple!
 
-<br/>
-<p align="center"><strong>Next:</strong><br/><a href="./defining-custom-block-nodes.md">Defining Custom Block Nodes</a></p>
-<br/>
+**Next:**  
+[Defining Custom Block Nodes](defining-custom-block-nodes.md)   
+
+

@@ -67,7 +67,7 @@ But you might want to preserve the node, and instead just convert it to a `parag
 
 Instead, Slate lets you define your own custom normalization logic.
 
-```js
+```javascript
 const schema = {
   document: {
     nodes: [{
@@ -89,7 +89,7 @@ When Slate discovers an invalid child, it will first check to see if your custom
 
 This gives you the best of both worlds. You can write simple, terse, declarative validation rules that can be highly optimized. But you can still define fine-grained, imperative normalization logic for when invalid states occur.
 
-> 🤖 For a full list of error `code` types, check out the [`Schema` reference](../reference/slate/schema.md).
+> 🤖 For a full list of error `code` types, check out the [`Schema` reference](../slate-core/schema.md).
 
 ## Low-level Normalizations
 
@@ -99,7 +99,7 @@ Sometimes though, the declarative validation syntax isn't fine-grained enough to
 
 When you define a `normalizeNode` function, you either return nothing if the node's already valid, or you return a normalizer function that will make the node valid if it isn't. Here's an example:
 
-```js
+```javascript
 function normalizeNode(node, editor, next) {
   const { nodes } = node
   if (node.object !== 'block') return next()
@@ -110,8 +110,9 @@ function normalizeNode(node, editor, next) {
 }
 ```
 
-This validation defines a very specific (honestly, useless) behavior, where if a node is a block and has three children, the first and last of which are text nodes, it is removed. I don't know why you'd ever do that, but the point is that you can get very specific with your validations this way. Any property of the node can be examined.
+This validation defines a very specific \(honestly, useless\) behavior, where if a node is a block and has three children, the first and last of which are text nodes, it is removed. I don't know why you'd ever do that, but the point is that you can get very specific with your validations this way. Any property of the node can be examined.
 
 When you need this level of specificity, using the `normalizeNode` property of the editor or plugins is handy.
 
 However, only use it when you absolutely have to. And when you do, make sure to optimize the function's performance. `normalizeNode` will be called **every time the node changes**, so it should be as performant as possible. That's why the example above returns early, so that the smallest amount of work is done each time it is called.
+

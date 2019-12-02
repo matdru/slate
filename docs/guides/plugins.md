@@ -8,13 +8,13 @@ Slate encourages you to break up code into small, reusable modules that can be s
 
 ## What Are Plugins?
 
-Slate's plugins are plain JavaScript objects containing a collection of functions that all contribute to a shared behavior—each with a specific name and set of arguments. For a full list of the arguments, check out the [Plugins](../reference/slate/plugins.md) and [React Plugins](../reference/slate-react/plugins.md) references.
+Slate's plugins are plain JavaScript objects containing a collection of functions that all contribute to a shared behavior—each with a specific name and set of arguments. For a full list of the arguments, check out the [Plugins](../slate-core/plugins.md) and [React Plugins](../slate-react/plugins.md) references.
 
 When building a plugin module, it should always export a function that takes options. This way even if it doesn't take any options now, it won't be a breaking API change to take more options in the future.
 
 So a basic plugin might look like this:
 
-```js
+```javascript
 export default function MySlatePlugin(options) {
   return {
     onKeyDown(event, editor, next) {
@@ -43,7 +43,7 @@ Notice how it's able to define a set of behaviors, reacting to different events,
 
 Slate's editor takes a list of plugins as one of its arguments. We refer to this list as the plugins "stack". It is very similar to "middleware" from Express or Koa, except instead of just a single stack of handler functions, there are multiple stacks for each type of request.
 
-```js
+```javascript
 const plugins = [
   ...
 ]
@@ -62,19 +62,19 @@ Because of this looping, plugins are **order-sensitive**! This is very important
 
 If you put Slate on the page without adding any of your own plugins, it will still behave like you'd expect a rich-text editor to. That's because it has its own "core" logic. And that core logic is implemented with its own core plugins.
 
-The core plugins doesn't have any assumptions about your schema, or what types of formatting you want to allow. But they do define common editing behaviors like splitting the current block when <kbd>enter</kbd> is pressed, or inserting a string of text when the user pastes from their clipboard.
+The core plugins doesn't have any assumptions about your schema, or what types of formatting you want to allow. But they do define common editing behaviors like splitting the current block when enter is pressed, or inserting a string of text when the user pastes from their clipboard.
 
 These are behaviors that all rich-text editors exhibit, and that don't make sense for userland to have to re-invent for every new editor.
 
 For the most part you don't need to worry about the core plugins.
 
-_To learn more, check out the [Core Plugin reference](../reference/slate/plugins.md)._
+_To learn more, check out the_ [_Core Plugin reference_](../slate-core/plugins.md)_._
 
 ## The "Editor" Plugin
 
-If you've read through the [`<Editor>` reference](../reference/slate-react/editor.md) you'll notice that the editor itself has handlers like `onKeyDown`, `onClick`, etc. just like plugins.
+If you've read through the [`<Editor>` reference](../slate-react/editor.md) you'll notice that the editor itself has handlers like `onKeyDown`, `onClick`, etc. just like plugins.
 
-```js
+```javascript
 const plugins = [
   ...
 ]
@@ -90,7 +90,7 @@ This is nice because it makes the editor feel like a proper React component, it 
 
 But under the covers, those editor handlers are actually just a convenient way of writing a plugin. Internally, the editor grabs all of those plugin-like properties, and turns them into an "editor" plugin that it places at the beginning of its plugins array. So that example above is actually equivalent to...
 
-```js
+```javascript
 const plugins = [
   { onClick: ..., onKeyDown: ... },
   ...
@@ -117,7 +117,7 @@ Helper plugins are usually very small, and just serve to easily encapsulate a sp
 
 For example, you may have a simple `Hotkey` plugin that makes binding behaviors to hotkeys a lot simpler:
 
-```js
+```javascript
 function Hotkey(hotkey, fn) {
   return {
     onKeyDown(event, editor, next) {
@@ -133,7 +133,7 @@ function Hotkey(hotkey, fn) {
 
 That pseudo-code allows you to encapsulate the hotkey-binding logic in one place, and re-use it anywhere else you want, like so:
 
-```js
+```javascript
 const plugins = [
   ...,
   Hotkey('cmd+b', editor => editor.addMark('bold')),
@@ -156,7 +156,7 @@ You could just have a single, long `plugins.js` file that contained all of the p
 
 Instead, it can help to split up your plugins into features. So you might have a `bold.js`, `italic.js`, `images.js`, etc. Your bold plugin might look like...
 
-```js
+```javascript
 function Bold(options) {
   return [
     Hotkey('cmd+b', addBoldMark),
@@ -193,7 +193,7 @@ If you think of another good pattern, feel free to pull request it!
 
 You should always write plugins as functions that take `options`.
 
-```js
+```javascript
 function YourPlugin(options) {
   return {
     ...
@@ -207,7 +207,7 @@ This is easy to do, and it means that even if you don't have any options now you
 
 This was alluded to in the previous section, but if your plugin defines queries like `hasBoldMark` or commands like `addBoldMark`, it can be helpful to expose those to the user so they can use the same functions in their own code.
 
-```js
+```javascript
 function YourBoldPlugin(options) {
   return {
     queries: {
@@ -231,7 +231,7 @@ If you write this in the naive way as taking a mark `type` string, users won't b
 
 Instead, let the user pass in a command name, like so:
 
-```js
+```javascript
 const plugins = [
   AddMark({
     hotkey: 'cmd+b',
@@ -241,3 +241,4 @@ const plugins = [
 ```
 
 That way they can choose exactly what logic adding a bold mark entails.
+

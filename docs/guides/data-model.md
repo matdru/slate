@@ -8,7 +8,7 @@ One of the main principles of Slate is that it tries to mirror the native DOM AP
 
 Mirroring the DOM is an intentional decision given Slate is a richer implementation of `contenteditable,` which uses the DOM. And people use the DOM to represent documents with rich-text-like structures all the time. Mirroring the DOM helps make the library familiar for new users, and it lets us reuse battle-tested patterns without having to reinvent them ourselves.
 
-Because it mirrors the DOM, Slate's data model features a [`Document`](../reference/slate/document.md) with [`Block`](../reference/slate/block.md), [`Inline`](../reference/slate/inline.md) and [`Text`](../reference/slate/text.md) nodes. You can reference parts of the document with a [`Range`](../reference/slate/range.md). And there is a special range-like object called a [`Selection`](../reference/slate/selection.md) that represents the user's current cursor selection.
+Because it mirrors the DOM, Slate's data model features a [`Document`](../slate-core/document.md) with [`Block`](../slate-core/block.md), [`Inline`](../slate-core/inline.md) and [`Text`](../slate-core/text.md) nodes. You can reference parts of the document with a [`Range`](../slate-core/range.md). And there is a special range-like object called a [`Selection`](../slate-core/selection.md) that represents the user's current cursor selection.
 
 > The following content on Mozilla's Developer Network may help you learn more about the corresponding DOM concepts:
 >
@@ -19,11 +19,11 @@ Because it mirrors the DOM, Slate's data model features a [`Document`](../refere
 
 ## Immutable Objects
 
-Slate's data model is implemented using [`Immutable.js`](https://immutable-js.github.io/immutable-js/) objects to allow more performant rendering and ensure objects cannot be accidentally modified (which are especially tricky bugs to track down).
+Slate's data model is implemented using [`Immutable.js`](https://immutable-js.github.io/immutable-js/) objects to allow more performant rendering and ensure objects cannot be accidentally modified \(which are especially tricky bugs to track down\).
 
 Specifically, Slate's models are [`Immutable.Record`](https://immutable-js.github.io/immutable-js/docs/#/Record) objects, which makes them very similar to JavaScript objects for retrieving values:
 
-```js
+```javascript
 const block = Block.create({ type: 'paragraph' })
 
 block.object // "block"
@@ -38,15 +38,15 @@ If you haven't used [`Immutable.js`](https://immutable-js.github.io/immutable-js
 
 ## The "Value"
 
-The top-level object in Slate—the object encapsulating the entire value of a Slate editor—is called a [`Value`](../reference/slate/value.md).
+The top-level object in Slate—the object encapsulating the entire value of a Slate editor—is called a [`Value`](../slate-core/value.md).
 
 Value consists of the document which contains all content, and a `selection` representing the user's current cursor selection. Value also has a few other advanced properties such as `decorations` and `data`.
 
-> 📋 For more info, check out the [`Value` reference](../reference/slate/value.md).
+> 📋 For more info, check out the [`Value` reference](../slate-core/value.md).
 
 The following example illustrates a simple Slate value which has been serialized and logged to the console. Continue reading to learn more about the data types represented.
 
-```json
+```javascript
 {
   "object": "value",
   "document": {
@@ -81,21 +81,17 @@ A Slate document is a nested and recursive structure. In a document block nodes 
 
 Unlike the DOM, Slate offers some constraints to prevent "impossible" situations from occurring. Slate's constraints include:
 
-* **Documents must have block nodes as direct children.** This constraint mirrors how rich-text editors work. The top-most elements are blocks that may be split when pressing <kbd>Enter</kbd>.
-
-* **Blocks may contain either only block nodes, or a combination of inline and text nodes.** This constraint helps you avoid boilerplate `if` statements. You can trust blocks either wrap (a) exclusively blocks, or (b) a combination of non-block nodes made up of inline and/or text nodes.
-
+* **Documents must have block nodes as direct children.** This constraint mirrors how rich-text editors work. The top-most elements are blocks that may be split when pressing Enter.
+* **Blocks may contain either only block nodes, or a combination of inline and text nodes.** This constraint helps you avoid boilerplate `if` statements. You can trust blocks either wrap \(a\) exclusively blocks, or \(b\) a combination of non-block nodes made up of inline and/or text nodes.
 * **Inlines can only contain inline or text nodes.** This constraint helps you avoid boilerplate code. When working within the context of an inline you can trust the contents do not contain blocks.
-
 * **Text nodes cannot be adjacent to other text nodes.** Any two adjacent text nodes will automatically be merged into one by Slate which prevents ambiguous cases where a cursor could be at the end of one text node or at the start of the next. However, you may have an inline node surrounded by two texts.
-
 * **Blocks and inlines must always contain at least one text node.** This constraint ensures that the user's cursor can always "enter" the nodes and that ranges can be created referencing them.
 
-Slate enforces all of these constraints for you automatically. As you [run commands](./commands-and-queries.md) to manipulate the document, Slate will normalize the value if it determines the document violates any of these constraints.
+Slate enforces all of these constraints for you automatically. As you [run commands](commands-and-queries.md) to manipulate the document, Slate will normalize the value if it determines the document violates any of these constraints.
 
 > 🙃 Fun fact: "normalizing" is actually based on the DOM's [`Node.normalize()`](https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize)!
 
-In addition to documents, blocks and inlines, Slate introduces one other type of markup that the DOM does not have natively, the [`Mark`](../reference/slate/mark.md) which is used for formatting.
+In addition to documents, blocks and inlines, Slate introduces one other type of markup that the DOM does not have natively, the [`Mark`](../slate-core/mark.md) which is used for formatting.
 
 ## Marks
 
@@ -109,14 +105,13 @@ When marks are rendered, the characters are grouped into "leaves" of text that e
 
 This limitation with respect to the ordering of marks is similar to the DOM, where this is invalid:
 
-<!-- prettier-ignore -->
-```html
+```markup
 <em>t<strong>e</em>x</strong>t
 ```
 
 Because the elements in the above example do not properly close themselves they are invalid. Instead, you would write the above HTML as follows:
 
-```html
+```markup
 <em>t</em><strong><em>e</em>x</strong>t
 ```
 
@@ -136,11 +131,11 @@ Ranges are defined by two `Point`s:
 * **Anchor point** is where the range starts
 * **Focus point** is where the range ends
 
-> Note: The terms "anchor" and "focus" are borrowed from the DOM API (see [anchor](https://developer.mozilla.org/en-US/docs/Web/API/Selection/anchorNode) and [focus](https://developer.mozilla.org/en-US/docs/Web/API/Selection/focusNode)).
+> Note: The terms "anchor" and "focus" are borrowed from the DOM API \(see [anchor](https://developer.mozilla.org/en-US/docs/Web/API/Selection/anchorNode) and [focus](https://developer.mozilla.org/en-US/docs/Web/API/Selection/focusNode)\).
 
 Each point is a combination of a "path" or "key" referencing a specific node, and an "offset". This ends up looking like this:
 
-```js
+```javascript
 const range = Range.create({
   anchor: {
     key: 'node-a',
@@ -161,8 +156,7 @@ An anchor and focus are established by a user interaction. The anchor point isn'
 
 Here's how Mozilla Developer Network explains it:
 
-> A user may make a selection from left to right (in document order) or right to left (reverse of document order). The anchor is where the user began the selection and the focus is where the user ends the selection. If you make a selection with a desktop mouse, the anchor is placed where you pressed the mouse button and the focus is placed where you released the mouse button. Anchor and focus should not be confused with the start and end positions of a selection, since anchor can be placed before the focus or vice versa, depending on the direction you made your selection.
-> — [`Selection`, MDN](https://developer.mozilla.org/en-US/docs/Web/API/Selection)
+> A user may make a selection from left to right \(in document order\) or right to left \(reverse of document order\). The anchor is where the user began the selection and the focus is where the user ends the selection. If you make a selection with a desktop mouse, the anchor is placed where you pressed the mouse button and the focus is placed where you released the mouse button. Anchor and focus should not be confused with the start and end positions of a selection, since anchor can be placed before the focus or vice versa, depending on the direction you made your selection. — [`Selection`, MDN](https://developer.mozilla.org/en-US/docs/Web/API/Selection)
 
 To make working with ranges easier, `Range` objects also provide both `start` and `end` point properties that consider whether the range is forward or backward into account. The `start.key` and `start.path` will always be before the `end.key` and `end.path` in the document to provide you with intuitive methods of working with ranges.
 
@@ -170,11 +164,11 @@ Typically, you will utilize `start` and `end` points since you rarely care which
 
 One important thing to note is that the anchor and focus points of ranges **always reference the "leaf-most" text nodes** in a document and never reference blocks or inlines. Said differently ranges always reference child text nodes. This range behavior is different than the DOM API and simplifies working with ranges as there are fewer edge cases for you to handle.
 
-> 📋 For more info, check out the [`Range` reference](../reference/slate/range.md).
+> 📋 For more info, check out the [`Range` reference](../slate-core/range.md).
 
 The `Selection` model contains slightly more information than the `Range` model because it is responsible for tracking the "focus" and "marks" for the user. Example:
 
-```js
+```javascript
 const selection = Selection.create({
   anchor: {
     key: 'node-a',
@@ -193,7 +187,7 @@ const selection = Selection.create({
 
 However, keeping the `key` and `path` of ranges or selections synchronized yourself is tedious. Instead, you can create selections using either option and have the other automatically be inferred by the document. To do so, you use the `createRange` and `createSelection` methods:
 
-```js
+```javascript
 const selection = document.createSelection({
   anchor: {
     key: 'node-a',
@@ -209,3 +203,4 @@ const selection = document.createSelection({
 ```
 
 The resulting `selection` will have a both the `key` and `path` set for its points, with the `key` being used to look up the `path` in the document.
+

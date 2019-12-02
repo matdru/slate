@@ -12,7 +12,7 @@ Using custom components for the nodes and marks is the most common rendering nee
 
 The function is called with the node's props, including `props.node` which is the node itself. You can use these to determine what to render. For example, you can render nodes using simple HTML elements:
 
-```js
+```javascript
 function renderBlock(props, editor, next) {
   const { node, attributes, children } = props
 
@@ -45,7 +45,7 @@ function renderInline(props, editor, next) {
 
 You don't have to use simple HTML elements, you can use your own custom React components too:
 
-```js
+```javascript
 function renderBlock(props, editor, next) {
   switch (props.node.type) {
     case 'paragraph':
@@ -62,7 +62,7 @@ function renderBlock(props, editor, next) {
 
 And you can just as easily put that `renderBlock` or `renderInline` logic into a plugin, and pass that plugin into your editor instead:
 
-```js
+```javascript
 function SomeRenderingPlugin() {
   return {
     renderBlock(props, editor, next) {
@@ -84,7 +84,7 @@ const plugins = [
 
 Marks work the same way, except they invoke the `renderMark` function. Like so:
 
-```js
+```javascript
 function renderMark(props, editor, next) {
   const { children, mark, attributes } = props
   switch (mark.type) {
@@ -116,7 +116,7 @@ Not only can you control the rendering behavior of the components inside the edi
 
 This sounds weird, but it can be pretty useful if you want to render additional top-level elements from inside a plugin. To do so, you use the `renderEditor` function:
 
-```js
+```javascript
 function renderEditor(props, editor, next) {
   const { editor } = props
   const wordCount = countWords(editor.value.text)
@@ -140,3 +140,4 @@ Here we're rendering a small word count number underneath all of the content of 
 This is very similar to how higher-order components work! Except it allows each plugin in Slate's plugin stack to wrap the editor's children.
 
 > 🤖 Be sure to remember to render `children` in your `renderEditor` functions, because that contains the editor's own elements!
+
